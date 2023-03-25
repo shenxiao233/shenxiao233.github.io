@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Coq基本函数式编程</title>
+    <url>/2023/03/24/Coq-%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</url>
+    <content><![CDATA[<h2 id="枚举类型"><a href="#枚举类型" class="headerlink" title="枚举类型"></a>枚举类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive season : Type :=</span><br><span class="line">| spring</span><br><span class="line">| summer</span><br><span class="line">| autumn</span><br><span class="line">| winter.</span><br></pre></td></tr></table></figure>
+
+<p>这个定义以关键字 Inductive 开头，说明是一个归纳定义，而紧跟其后的season : Type 声明 season 是我们新定义的一个类型。竖线隔开四种情况，spring、summer 等是类型构造子（type constructor），因为没带任何参数，可以简单理解为四个元素，它们组成一个集合，即名为 season 的类型所表示的集合。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition opposite_eason (s : season) : season :=</span><br><span class="line">match s with</span><br><span class="line">| spring =&gt; autumn</span><br><span class="line">| summer =&gt; winter</span><br><span class="line">| autumn =&gt; spring</span><br><span class="line">| winter =&gt; summer</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>定义一个名为 opposite_season 的函数，对输入的一个季节，返回与它相反的季节，因此输入和输出的类型均为 season，换句话说，这个函数自身的类型是 season → season。</p>
+<p>在具体定义中我们以模式匹配（pattern matching）的方式，区分 s 的不同形式。如果 s 是 spring，则返回 autumn；如果是 summer，则返回 winter，等等。</p>
+<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>Coq 中的每个表达式都有类型，它描述了该表达式所计算的东西的类别。 Check 指令会让 Coq 显示一个表达式的类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Check true.</span><br><span class="line">(* ===&gt; true : bool *)</span><br></pre></td></tr></table></figure>
+
+<p>如果在被 Check 的表达式后加上一个分号和你想验证的类型，那么 Coq 会 验证该表达式是否属于你提供的类型。当两者不一致时，Coq 会报错并终止执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Check true</span><br><span class="line">    : bool.</span><br></pre></td></tr></table></figure>
+
+<h2 id="布尔类型"><a href="#布尔类型" class="headerlink" title="布尔类型"></a>布尔类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive bool : Type :=</span><br><span class="line">| true</span><br><span class="line">| false.</span><br></pre></td></tr></table></figure>
+
+<p>布尔类型实际上是一个特殊的枚举类型，它只包含两个数据值，在这里我们不妨称为 true 和 false。</p>
+<p>对布尔类型数据的常用操作如“与”、“或”、“非”等都容易定义。例如，我们定义函数 andb 来表示“与”操作。这个函数输入两个参数 b1 和 b2，如果b1 的值为 true，直接返回 b2 的值，否则返回 false。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition andb (b1 : bool) (b2 : bool) : bool :=</span><br><span class="line">match b1 with</span><br><span class="line">| true =&gt; b2</span><br><span class="line">| false =&gt; false</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>上面这个函数的两个输入参数类型相同，在 Coq 中可以写得紧凑一点，依次列出两个参数，中间用空格隔开，最后写上类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition andb (b1 b2 : bool) : bool :=</span><br><span class="line">match b1 with</span><br><span class="line">| true =&gt; b2</span><br><span class="line">| false =&gt; false</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<h2 id="Notation-命令"><a href="#Notation-命令" class="headerlink" title="Notation 命令"></a>Notation 命令</h2><p>Notation 命令可以用来定义新的记号。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Notation &quot;x &amp;&amp; y&quot; := (andb x y).</span><br></pre></td></tr></table></figure>
+
+<p>有个这个记号以后，将来如果我们写表达式 (b1 &amp;&amp; b2)，那么代表的意思就是 (andb b1 b2)，这类似有些编程语言中的宏定义。</p>
+<h2 id="自然数类型"><a href="#自然数类型" class="headerlink" title="自然数类型"></a>自然数类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive nat : Type :=</span><br><span class="line">| O</span><br><span class="line">| S (n : nat).</span><br><span class="line">End Playground.</span><br></pre></td></tr></table></figure>
+
+<p>O 表示自然数 0；S 表示后继函数，如果 n 是一个自然数，则 S n表示它的下一个自然数。</p>
+<p>O, S O, S (S O), S (S (S O)), …对应通常的自然数 0, 1, 2, 3, ….。</p>
+<p>例如，下面的 pred2 函数取比当且输入数 n 小 2 的数，除了特殊情况 n &#x3D; 0, 1，那时返回值为 0。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition pred2 (n : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; O</span><br><span class="line">| S O =&gt; O</span><br><span class="line">| S (S n&#x27;) =&gt; n&#x27;</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>为定义复杂一些的函数，仅用模式匹配还不够，我们需要递归定义，反映到语法层面就是定义的开头用关键字 Fixpoint 而不是 Definition。下面的函数 oddb 可判断当 n 取 0 或者 1 时，我们直接判断出结果，否则，n 是不是奇数这件事情依赖于 n 之前第二个数字的奇偶性。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint oddb (n : nat) : bool :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; false</span><br><span class="line">| S O =&gt; true</span><br><span class="line">| S (S n&#x27;) =&gt; oddb n&#x27;</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>如果一个函数的参数不止一个，那么用于模式匹配的参数选取可能不唯一。下面给出加法函数的两种定义，都可以被 Coq 接受。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint plus (n m : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; m</span><br><span class="line">| S n&#x27; =&gt; S (plus n&#x27; m)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint plus&#x27; (n m : nat) : nat :=</span><br><span class="line">match m with</span><br><span class="line">| O =&gt; n</span><br><span class="line">| S m&#x27; =&gt; S (plus n m&#x27;)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<h3 id="占位符“-”"><a href="#占位符“-”" class="headerlink" title="占位符“_”"></a>占位符“_”</h3><p>有时候我们可以同时对多个参数做模式匹配，不同参数之间用逗号隔开。下面定义的减法函数演示了这一点，其中不重要的参数可以不写，改用占位符“_” 代替。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint minus (n m : nat) : nat :=</span><br><span class="line">match n, m with</span><br><span class="line">| O , _ =&gt; O</span><br><span class="line">| S _ , O =&gt; n</span><br><span class="line">| S n&#x27;, S m&#x27; =&gt; minus n&#x27; m&#x27;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h3 id="嵌套的模式匹配"><a href="#嵌套的模式匹配" class="headerlink" title="嵌套的模式匹配"></a>嵌套的模式匹配</h3><p>当然，我们也可以把对多个参数的同时模式匹配改为嵌套的模式匹配。下面定义的函数 minus’ 与 minus 是等效的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint minus&#x27; (n m : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; O</span><br><span class="line">| S n&#x27; =&gt; match m with</span><br><span class="line">| O =&gt; n</span><br><span class="line">| S m&#x27; =&gt; minus&#x27; n&#x27; m&#x27;</span><br><span class="line">end</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<h2 id="二元组"><a href="#二元组" class="headerlink" title="二元组"></a>二元组</h2><p>上一节介绍的布尔类型和自然数类型都是基本数据类型。现在我们从基本类型出发来构造复杂一些的类型。我们先定义二元组（pair）类型，它包含的每一个元素是一对自然数。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive natpair : Type :=</span><br><span class="line">| pair (n1 n2 : nat).</span><br></pre></td></tr></table></figure>
+
+<p>类型 natpair 只有一个构造子 pair，说明构造一对自然数的唯一方法是把pair 作用到两个自然数上。</p>
+<p>下面我们定义两个投影（projection）函数，把给定的一对自然数投影到第一或第二个组成数字上。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition proj1 (p : natpair) : nat :=</span><br><span class="line">match p with</span><br><span class="line">| (x,y) =&gt; x</span><br><span class="line">end.</span><br><span class="line"></span><br><span class="line">Definition proj2 (p : natpair) : nat :=</span><br><span class="line">match p with</span><br><span class="line">| (x,y) =&gt; y</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>例如，下面的命令测试如何把一对数字 (1, 2) 变成 (2, 1)。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Compute (proj2 (1, 2), proj1 (1, 2)).</span><br></pre></td></tr></table></figure>
+
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>通过推广二元组类型，我们可以构建三元组、四元组等等，更一般情况就是列表，其长度可以变化。简单而言，由自然数组成的一个列表或者是空表，或者是由一个自然数和另一个列表组成的二元组。我们在模块 NatList 中定义自然数列表类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive natlist : Type :=</span><br><span class="line">| nil</span><br><span class="line">| cons (n : nat) (l : natlist).</span><br></pre></td></tr></table></figure>
+
+<p>这个定义中用到两个构造子：nil 表示空表；cons 把自然数 n 和列表 l 组合成一个更长的列表 cons n l。</p>
+<p>我们引入中缀操作符记号 :: 和方括号来表示列表，其中细节暂时不用关心。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition list1 := 1 :: (3 :: (5 :: nil)).</span><br><span class="line">Definition list2 := 1 :: 3 :: 5 :: nil.</span><br><span class="line">Definition list3 := [1;3;5].</span><br></pre></td></tr></table></figure>
+
+<p>利用这些记号，我们定义 3 个列表，实际上描述的是同一个列表。</p>
+<p>下面我们定义一些有用的函数，方便对列表进行操纵。函数 repeat 有两个输入参数 n 和 count，它返回一个长度为 count 的列表，其中每个元素都是 n。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint repeat (n count : nat) : natlist :=</span><br><span class="line">match count with</span><br><span class="line">| O =&gt; nil</span><br><span class="line">| S count&#x27; =&gt; n :: (repeat n count&#x27;)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>函数 length 可用于计算一个列表的长度。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint length (l:natlist) : nat :=</span><br><span class="line">match l with</span><br><span class="line">| nil =&gt; O</span><br><span class="line">| h :: t =&gt; S (length t)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Coq</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+        <tag>Markdown</tag>
+      </tags>
+  </entry>
+</search>
