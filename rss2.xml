@@ -37,5 +37,28 @@
       
     </item>
     
+    <item>
+      <title>基本算法练习</title>
+      <link>http://www.example.com/2023/03/24/%E5%A1%AB%E7%A9%BA%E9%A2%98-%E7%BB%83%E4%B9%A0/</link>
+      <guid>http://www.example.com/2023/03/24/%E5%A1%AB%E7%A9%BA%E9%A2%98-%E7%BB%83%E4%B9%A0/</guid>
+      <pubDate>Fri, 24 Mar 2023 04:16:12 GMT</pubDate>
+      
+      <description>朝花夕拾--填空练习</description>
+      
+      
+      
+      <content:encoded><![CDATA[<h1 id="蛇形填数"><a href="#蛇形填数" class="headerlink" title="蛇形填数"></a>蛇形填数</h1><p>如下图所示，小明用从 1开始的正整数“蛇形”填充无限大的矩阵。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 2 6 7 15 ...</span><br><span class="line">3 5 8 14 ...</span><br><span class="line">4 9 13 ...</span><br><span class="line">10 12 ...</span><br><span class="line">11 ...</span><br><span class="line">...</span><br></pre></td></tr></table></figure><p>容易看出矩阵第二行第二列中的数是 5请你计算矩阵中第 20 行第 20 列的数是多少？</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    int row=1,col=1,flag=1,num=1;</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        if(row==1)&#123;</span><br><span class="line">            col++;flag=1;num++;</span><br><span class="line">        &#125;</span><br><span class="line">        if(col==1)&#123;</span><br><span class="line">            row++;flag=-1;num++;</span><br><span class="line">        &#125;</span><br><span class="line">        row+=flag;col-=flag;num++;</span><br><span class="line">        if(row==20&amp;&amp;col==20) break;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;num;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content:encoded>
+      
+      
+      <category domain="http://www.example.com/categories/%E5%A1%AB%E7%A9%BA%E7%BB%83%E4%B9%A0/">填空练习</category>
+      
+      
+      <category domain="http://www.example.com/tags/%E8%93%9D%E6%A1%A5%E6%9D%AF/">蓝桥杯</category>
+      
+      
+      <comments>http://www.example.com/2023/03/24/%E5%A1%AB%E7%A9%BA%E9%A2%98-%E7%BB%83%E4%B9%A0/#disqus_thread</comments>
+      
+    </item>
+    
   </channel>
 </rss>
