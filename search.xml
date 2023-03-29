@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>LISTS-使用结构化的数据</title>
+    <title>Coq Basics (II)</title>
     <url>/2023/03/28/LISTS-%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E5%8C%96%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%88coq%EF%BC%89/</url>
     <content><![CDATA[<h2 id="数值序对"><a href="#数值序对" class="headerlink" title="数值序对"></a>数值序对</h2><p>在 Inductive 类型定义中，每个构造子（Constructor）可以有任意多个参数 —— 可以没有（如 true 和 O），可以只有一个（如 S），也可以更多 （如 nybble，以及下文所示）：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive natprod : Type :=</span><br><span class="line">| pair (n1 n2 : nat).</span><br></pre></td></tr></table></figure>
@@ -61,7 +61,7 @@
       </tags>
   </entry>
   <entry>
-    <title>Coq基本函数式编程</title>
+    <title>Coq Basics (I)</title>
     <url>/2023/03/24/Coq-%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="inductive"><a href="#inductive" class="headerlink" title="inductive"></a>inductive</h2><p>Inductive是Coq用来定义数据类型，实际上Coq的数据类型十分精简，但是我们可以通过这样的方法来自定义数据类型，Coq中最基本的数据类型就是Type，相当于Java的Object。语句的结构为:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive [TYPE_NAME] : [INHERITED_TYPE] := &#123;IND_DEF&#125;</span><br></pre></td></tr></table></figure>

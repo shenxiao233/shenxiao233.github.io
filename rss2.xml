@@ -9,11 +9,11 @@
     <atom:link href="http://www.example.com/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>输出倒逼思考</description>
-    <pubDate>Wed, 29 Mar 2023 03:34:42 GMT</pubDate>
+    <pubDate>Wed, 29 Mar 2023 12:04:39 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     <item>
-      <title>LISTS-使用结构化的数据</title>
+      <title>Coq Basics (II)</title>
       <link>http://www.example.com/2023/03/28/LISTS-%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E5%8C%96%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%88coq%EF%BC%89/</link>
       <guid>http://www.example.com/2023/03/28/LISTS-%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E5%8C%96%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%88coq%EF%BC%89/</guid>
       <pubDate>Tue, 28 Mar 2023 04:16:12 GMT</pubDate>
@@ -36,7 +36,7 @@
     </item>
     
     <item>
-      <title>Coq基本函数式编程</title>
+      <title>Coq Basics (I)</title>
       <link>http://www.example.com/2023/03/24/Coq-%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</link>
       <guid>http://www.example.com/2023/03/24/Coq-%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</guid>
       <pubDate>Fri, 24 Mar 2023 04:16:12 GMT</pubDate>
