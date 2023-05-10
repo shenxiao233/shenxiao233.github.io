@@ -1,6 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Coq Basics (I)</title>
+    <url>/2023/03/24/Coq-%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</url>
+    <content><![CDATA[<h2 id="inductive"><a href="#inductive" class="headerlink" title="inductive"></a>inductive</h2><p>Inductive是Coq用来定义数据类型，实际上Coq的数据类型十分精简，但是我们可以通过这样的方法来自定义数据类型，Coq中最基本的数据类型就是Type，相当于Java的Object。语句的结构为:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive [TYPE_NAME] : [INHERITED_TYPE] := &#123;IND_DEF&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="枚举类型"><a href="#枚举类型" class="headerlink" title="枚举类型"></a>枚举类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive season : Type :=</span><br><span class="line">| spring</span><br><span class="line">| summer</span><br><span class="line">| autumn</span><br><span class="line">| winter.</span><br></pre></td></tr></table></figure>
+
+<p>这个定义以关键字 Inductive 开头，说明是一个归纳定义，而紧跟其后的season : Type 声明 season 是我们新定义的一个类型。竖线隔开四种情况，spring、summer 等是类型构造子（type constructor），因为没带任何参数，可以简单理解为四个元素，它们组成一个集合，即名为 season 的类型所表示的集合。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition opposite_eason (s : season) : season :=</span><br><span class="line">match s with</span><br><span class="line">| spring =&gt; autumn</span><br><span class="line">| summer =&gt; winter</span><br><span class="line">| autumn =&gt; spring</span><br><span class="line">| winter =&gt; summer</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>定义一个名为 opposite_season 的函数，对输入的一个季节，返回与它相反的季节，因此输入和输出的类型均为 season，换句话说，这个函数自身的类型是 season → season。</p>
+<p>在具体定义中我们以模式匹配（pattern matching）的方式，区分 s 的不同形式。如果 s 是 spring，则返回 autumn；如果是 summer，则返回 winter，等等。</p>
+<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>Coq 中的每个表达式都有类型，它描述了该表达式所计算的东西的类别。 Check 指令会让 Coq 显示一个表达式的类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Check true.</span><br><span class="line">(* ===&gt; true : bool *)</span><br></pre></td></tr></table></figure>
+
+<p>如果在被 Check 的表达式后加上一个分号和你想验证的类型，那么 Coq 会 验证该表达式是否属于你提供的类型。当两者不一致时，Coq 会报错并终止执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Check true</span><br><span class="line">    : bool.</span><br></pre></td></tr></table></figure>
+
+<h2 id="布尔类型"><a href="#布尔类型" class="headerlink" title="布尔类型"></a>布尔类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive bool : Type :=</span><br><span class="line">| true</span><br><span class="line">| false.</span><br></pre></td></tr></table></figure>
+
+<p>布尔类型实际上是一个特殊的枚举类型，它只包含两个数据值，在这里我们不妨称为 true 和 false。</p>
+<p>对布尔类型数据的常用操作如“与”、“或”、“非”等都容易定义。例如，我们定义函数 andb 来表示“与”操作。这个函数输入两个参数 b1 和 b2，如果b1 的值为 true，直接返回 b2 的值，否则返回 false。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition andb (b1 : bool) (b2 : bool) : bool :=</span><br><span class="line">match b1 with</span><br><span class="line">| true =&gt; b2</span><br><span class="line">| false =&gt; false</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>上面这个函数的两个输入参数类型相同，在 Coq 中可以写得紧凑一点，依次列出两个参数，中间用空格隔开，最后写上类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition andb (b1 b2 : bool) : bool :=</span><br><span class="line">match b1 with</span><br><span class="line">| true =&gt; b2</span><br><span class="line">| false =&gt; false</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<h2 id="Notation-命令"><a href="#Notation-命令" class="headerlink" title="Notation 命令"></a>Notation 命令</h2><p>Notation 命令可以用来定义新的记号。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Notation &quot;x &amp;&amp; y&quot; := (andb x y).</span><br></pre></td></tr></table></figure>
+
+<p>有个这个记号以后，将来如果我们写表达式 (b1 &amp;&amp; b2)，那么代表的意思就是 (andb b1 b2)，这类似有些编程语言中的宏定义。</p>
+<h2 id="Tactics"><a href="#Tactics" class="headerlink" title="Tactics"></a>Tactics</h2><h3 id="simpl和reflexivity-化简"><a href="#simpl和reflexivity-化简" class="headerlink" title="simpl和reflexivity-化简"></a>simpl和reflexivity-化简</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_O_n: forall n : nat, o + n = n Proof. intros n. simpl. reflexitivity. Qed.</span><br></pre></td></tr></table></figure>
+
+<p>这个证明只用了simpl和reflexivity两种方法。simpl可以将等式的两边同时化简(simplify)，而reflexivity是用来检查等式的两边是否完全一致(identical)。一般情况下，不需要加simpl，因为reflexivity本身在检查一致性的时候，就会自动的进行展开，如果需要在调试的时候查看化简之后的效果才会加上simpl。</p>
+<p>reflexivity除了进行化简的工作，还会根据定义将产生式展开(unfolding)。化简和展开的区别在于，化简是将定义的函数（比如递归函数）化简到稳定的状态（对于递归函数，就是Base case）；展开则是利用产生式的构造子完整的写出数据的形式。</p>
+<p>能够化简的一个前提条件是，函数能够无歧义的化简（上文中n + o &#x3D; n就不能够化简证明，需要分情况证明）。</p>
+<h3 id="rewrite-重写"><a href="#rewrite-重写" class="headerlink" title="rewrite-重写"></a>rewrite-重写</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_id_example : forall n m:nat,</span><br><span class="line">n = m -&gt; n + n = m + m. Proof. </span><br><span class="line">(* move both quantifiers into the context: *)</span><br><span class="line">intros n m. </span><br><span class="line">(* move the hypothesis into the context: *) </span><br><span class="line">intros H. </span><br><span class="line">(* rewrite the goal using the hypothesis: *)</span><br><span class="line">rewrite -&gt; H. reflexivity. Qed.</span><br></pre></td></tr></table></figure>
+
+<p>重写(rewriting)指的是，在证明的过程中，按照给出的前提假设(Hypothesis)，在要证明的式子两边对变量进行改写，辅助证明。</p>
+<p>-&gt;表示的意思是使用前提假设的右侧替换左侧，&lt;-表示左侧替换右侧。</p>
+<p>对于上面的证明过程，我们无法指出所有可能的取值，因此证明的时候无法进行相应的确切的化简，因此需要改写变量满足假设进行证明，该重写过程就是n + n &#x3D; m + m (<em>–&gt;</em>) m + m &#x3D; m + m</p>
+<h3 id="destruct"><a href="#destruct" class="headerlink" title="destruct"></a>destruct</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem surjective_pairing : forall (p : natprod), p = (fst p, snd p). </span><br><span class="line">Proof. intros p.</span><br><span class="line">destruct p as [n m]. </span><br><span class="line">simpl. reflexivity. Qed.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_1_neq_0 : </span><br><span class="line">forall n : nat, beq_nat (n + 1) 0 = false.</span><br><span class="line">Proof. intros n. </span><br><span class="line">destruct n as [| n&#x27;].</span><br><span class="line">- reflexivity. - reflexivity. Qed.</span><br></pre></td></tr></table></figure>
+<p>上述代码可以改写为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_1_neq_0&#x27; : </span><br><span class="line">forall n :nat, beq_nat (n + 1) 0 = false. </span><br><span class="line">Proof. intros [|n]. </span><br><span class="line">- reflexivity.</span><br><span class="line">- reflexivity. Qed.</span><br></pre></td></tr></table></figure>
+
+<p>使用destruct对引入的参数进行分情况讨论，设置子目标(sub goal)，分别进行证明。分情况讨论允许多层的嵌套，在需要进行分情况讨论的地方进行destruct。</p>
+<p>每个子目标前面的-没有语法含义，可以替换为+或者*。</p>
+<p>destruct后面的中括号参数是根据类型的定义设置的，如果出现多种情况就是用|隔开。对于nat的定义，第一个构造子(constructor)并无参数，因此为空，第二个构造器的参数也是nat，因此需要指明参数名称。如果构造器都没有参数，那就可以省略as子句。</p>
+<h3 id="induction-假设归纳"><a href="#induction-假设归纳" class="headerlink" title="induction-假设归纳"></a>induction-假设归纳</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_n_O : </span><br><span class="line">forall n:nat, n = n + 0. </span><br><span class="line">Proof. intros n. </span><br><span class="line">induction n as [| n&#x27; IHn&#x27;].</span><br><span class="line">- (* n = 0 *) reflexivity. </span><br><span class="line">- (* n = S n&#x27; *) simpl. rewrite &lt;- IHn&#x27;. </span><br><span class="line">reflexivity. Qed.</span><br></pre></td></tr></table></figure>
+
+<p>那上述的证明来说明，n可以是任意大的自然数，如果按照分情况讨论的话，可能会一直化简下去，并不能验证任意大小的n。这种情况下，使用类似于数学归纳法进行证明，即induction，归纳证明命题的正确性。</p>
+<p>归纳induction的语法结构同样类似与destruct，产生的不同的子目标，进行归纳证明。产生的子目标也同样根据参数的构造方法有关，并使用|区分不同构造子情况，并在之后子目标的论证用-、+或者*加以区别。induction可以提供关于子目标环境下的参数命名，也可以对子目标环境下的假设(hypothesis)进行命名（在上述论证中就是IHn’，代表着n’ &#x3D; n’ + 0），在该子目标下进行重写，进行进一步的论证。</p>
+<h3 id="assert-行间证明"><a href="#assert-行间证明" class="headerlink" title="assert-行间证明"></a>assert-行间证明</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem mult_0_plus&#x27; : </span><br><span class="line">forall n m :nat, (0 + n) * m = n * m.</span><br><span class="line">Proof. intros n m. </span><br><span class="line">assert (H: 0 + n = n). &#123; reflexivity. &#125; </span><br><span class="line">rewrite → H. </span><br><span class="line">reflexivity. Qed.</span><br></pre></td></tr></table></figure>
+
+<p>如果在证明的过程中需要加入临时的、显而易见的中间引理证明，那么可以考虑assert进行证明内的小引理证明(subtheorem)。assert这种方式引入了两个子目标，第一个便是断言(assertion)本身（在上述的论证中，断言被命名为H，指的是0+n&#x3D;0），这个子目标的论证囊括在大括号…中。另一个子目标就是在既有断言基础上进行原先的论证，通常也是通过重写来完成。</p>
+<p>断言的方式主要是提供一种类似于匿名函数的功能。</p>
+<h2 id="自然数类型"><a href="#自然数类型" class="headerlink" title="自然数类型"></a>自然数类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive nat : Type :=</span><br><span class="line">| O</span><br><span class="line">| S (n : nat).</span><br><span class="line">End Playground.</span><br></pre></td></tr></table></figure>
+
+<p>O 表示自然数 0；S 表示后继函数，如果 n 是一个自然数，则 S n表示它的下一个自然数。</p>
+<p>O, S O, S (S O), S (S (S O)), …对应通常的自然数 0, 1, 2, 3, ….。</p>
+<p>例如，下面的 pred2 函数取比当且输入数 n 小 2 的数，除了特殊情况 n &#x3D; 0, 1，那时返回值为 0。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition pred2 (n : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; O</span><br><span class="line">| S O =&gt; O</span><br><span class="line">| S (S n&#x27;) =&gt; n&#x27;</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<h2 id="Fixpoint"><a href="#Fixpoint" class="headerlink" title="Fixpoint"></a>Fixpoint</h2><p>Fixpoint允许递归的调用本身，但是这种调用必须是一种有界的。因此，Fixpoint函数中所匹配(match)的参数必须是以降序的方式进行展开，确保不会无限递归。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint plus (n : nat) (m : nat) : nat := </span><br><span class="line">match n with</span><br><span class="line">| O ⇒ m </span><br><span class="line">| S n&#x27; ⇒ S (plus n&#x27; m) end.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint beq_nat (n m : nat) : bool :=</span><br><span class="line">match n with</span><br><span class="line">| O ⇒ match m with </span><br><span class="line">| O ⇒ true </span><br><span class="line">| S m&#x27; ⇒ false end </span><br><span class="line">| S n&#x27; ⇒ match m with </span><br><span class="line">         | O ⇒ false </span><br><span class="line">         | S m&#x27; ⇒ beq_nat n&#x27; m&#x27; end end.</span><br></pre></td></tr></table></figure>
+
+<p>为定义复杂一些的函数，仅用模式匹配还不够，我们需要递归定义，反映到语法层面就是定义的开头用关键字 Fixpoint 而不是 Definition。下面的函数 oddb 可判断当 n 取 0 或者 1 时，我们直接判断出结果，否则，n 是不是奇数这件事情依赖于 n 之前第二个数字的奇偶性。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint oddb (n : nat) : bool :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; false</span><br><span class="line">| S O =&gt; true</span><br><span class="line">| S (S n&#x27;) =&gt; oddb n&#x27;</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>如果一个函数的参数不止一个，那么用于模式匹配的参数选取可能不唯一。下面给出加法函数的两种定义，都可以被 Coq 接受。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint plus (n m : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; m</span><br><span class="line">| S n&#x27; =&gt; S (plus n&#x27; m)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint plus&#x27; (n m : nat) : nat :=</span><br><span class="line">match m with</span><br><span class="line">| O =&gt; n</span><br><span class="line">| S m&#x27; =&gt; S (plus n m&#x27;)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<h2 id="占位符“-”"><a href="#占位符“-”" class="headerlink" title="占位符“_”"></a>占位符“_”</h2><p>有时候我们可以同时对多个参数做模式匹配，不同参数之间用逗号隔开。下面定义的减法函数演示了这一点，其中不重要的参数可以不写，改用占位符“_” 代替。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint minus (n m : nat) : nat :=</span><br><span class="line">match n, m with</span><br><span class="line">| O , _ =&gt; O</span><br><span class="line">| S _ , O =&gt; n</span><br><span class="line">| S n&#x27;, S m&#x27; =&gt; minus n&#x27; m&#x27;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="嵌套的模式匹配"><a href="#嵌套的模式匹配" class="headerlink" title="嵌套的模式匹配"></a>嵌套的模式匹配</h2><p>当然，我们也可以把对多个参数的同时模式匹配改为嵌套的模式匹配。下面定义的函数 minus’ 与 minus 是等效的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint minus&#x27; (n m : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; O</span><br><span class="line">| S n&#x27; =&gt; match m with</span><br><span class="line">| O =&gt; n</span><br><span class="line">| S m&#x27; =&gt; minus&#x27; n&#x27; m&#x27;</span><br><span class="line">end</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<h2 id="二元组"><a href="#二元组" class="headerlink" title="二元组"></a>二元组</h2><p>上一节介绍的布尔类型和自然数类型都是基本数据类型。现在我们从基本类型出发来构造复杂一些的类型。我们先定义二元组（pair）类型，它包含的每一个元素是一对自然数。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive natpair : Type :=</span><br><span class="line">| pair (n1 n2 : nat).</span><br></pre></td></tr></table></figure>
+
+<p>类型 natpair 只有一个构造子 pair，说明构造一对自然数的唯一方法是把pair 作用到两个自然数上。</p>
+<p>下面我们定义两个投影（projection）函数，把给定的一对自然数投影到第一或第二个组成数字上。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition proj1 (p : natpair) : nat :=</span><br><span class="line">match p with</span><br><span class="line">| (x,y) =&gt; x</span><br><span class="line">end.</span><br><span class="line"></span><br><span class="line">Definition proj2 (p : natpair) : nat :=</span><br><span class="line">match p with</span><br><span class="line">| (x,y) =&gt; y</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>例如，下面的命令测试如何把一对数字 (1, 2) 变成 (2, 1)。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Compute (proj2 (1, 2), proj1 (1, 2)).</span><br></pre></td></tr></table></figure>
+
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>通过推广二元组类型，我们可以构建三元组、四元组等等，更一般情况就是列表，其长度可以变化。简单而言，由自然数组成的一个列表或者是空表，或者是由一个自然数和另一个列表组成的二元组。我们在模块 NatList 中定义自然数列表类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive natlist : Type :=</span><br><span class="line">| nil</span><br><span class="line">| cons (n : nat) (l : natlist).</span><br></pre></td></tr></table></figure>
+
+<p>这个定义中用到两个构造子：nil 表示空表；cons 把自然数 n 和列表 l 组合成一个更长的列表 cons n l。</p>
+<p>我们引入中缀操作符记号 :: 和方括号来表示列表，其中细节暂时不用关心。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition list1 := 1 :: (3 :: (5 :: nil)).</span><br><span class="line">Definition list2 := 1 :: 3 :: 5 :: nil.</span><br><span class="line">Definition list3 := [1;3;5].</span><br></pre></td></tr></table></figure>
+
+<p>利用这些记号，我们定义 3 个列表，实际上描述的是同一个列表。</p>
+<p>下面我们定义一些有用的函数，方便对列表进行操纵。函数 repeat 有两个输入参数 n 和 count，它返回一个长度为 count 的列表，其中每个元素都是 n。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint repeat (n count : nat) : natlist :=</span><br><span class="line">match count with</span><br><span class="line">| O =&gt; nil</span><br><span class="line">| S count&#x27; =&gt; n :: (repeat n count&#x27;)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
+
+<p>函数 length 可用于计算一个列表的长度。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint length (l:natlist) : nat :=</span><br><span class="line">match l with</span><br><span class="line">| nil =&gt; O</span><br><span class="line">| h :: t =&gt; S (length t)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Coq</category>
+      </categories>
+      <tags>
+        <tag>coq</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Coq Basics (IV)</title>
     <url>/2023/04/24/apply%20%E7%AD%96%E7%95%A5/</url>
     <content><![CDATA[<h2 id="apply-策略"><a href="#apply-策略" class="headerlink" title="apply 策略"></a>apply 策略</h2><p>我们经常会遇到待证目标与上下文中的前提或已证引理’刚好相同’的情况。</p>
@@ -133,123 +250,6 @@
 <h2 id="复习"><a href="#复习" class="headerlink" title="复习"></a>复习</h2><p>现在我们已经见过 Coq 中最基础的策略了。未来的章节中我们还会介绍更多， 之后我们会看到一些更加强大的*’自动化’*策略，它能让 Coq 帮我们处理底层的细节。 不过基本上我们已经有了完成工作所需的东西。</p>
 <p>下面是我们已经见过的：</p>
 <p><img src="https://raw.githubusercontent.com/shenxiao233/tupian_img/main/202305102104065.png" alt="基本策略"></p>
-]]></content>
-      <categories>
-        <category>Coq</category>
-      </categories>
-      <tags>
-        <tag>coq</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Coq Basics (I)</title>
-    <url>/2023/03/24/Coq-%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</url>
-    <content><![CDATA[<h2 id="inductive"><a href="#inductive" class="headerlink" title="inductive"></a>inductive</h2><p>Inductive是Coq用来定义数据类型，实际上Coq的数据类型十分精简，但是我们可以通过这样的方法来自定义数据类型，Coq中最基本的数据类型就是Type，相当于Java的Object。语句的结构为:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive [TYPE_NAME] : [INHERITED_TYPE] := &#123;IND_DEF&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="枚举类型"><a href="#枚举类型" class="headerlink" title="枚举类型"></a>枚举类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive season : Type :=</span><br><span class="line">| spring</span><br><span class="line">| summer</span><br><span class="line">| autumn</span><br><span class="line">| winter.</span><br></pre></td></tr></table></figure>
-
-<p>这个定义以关键字 Inductive 开头，说明是一个归纳定义，而紧跟其后的season : Type 声明 season 是我们新定义的一个类型。竖线隔开四种情况，spring、summer 等是类型构造子（type constructor），因为没带任何参数，可以简单理解为四个元素，它们组成一个集合，即名为 season 的类型所表示的集合。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition opposite_eason (s : season) : season :=</span><br><span class="line">match s with</span><br><span class="line">| spring =&gt; autumn</span><br><span class="line">| summer =&gt; winter</span><br><span class="line">| autumn =&gt; spring</span><br><span class="line">| winter =&gt; summer</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<p>定义一个名为 opposite_season 的函数，对输入的一个季节，返回与它相反的季节，因此输入和输出的类型均为 season，换句话说，这个函数自身的类型是 season → season。</p>
-<p>在具体定义中我们以模式匹配（pattern matching）的方式，区分 s 的不同形式。如果 s 是 spring，则返回 autumn；如果是 summer，则返回 winter，等等。</p>
-<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>Coq 中的每个表达式都有类型，它描述了该表达式所计算的东西的类别。 Check 指令会让 Coq 显示一个表达式的类型。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Check true.</span><br><span class="line">(* ===&gt; true : bool *)</span><br></pre></td></tr></table></figure>
-
-<p>如果在被 Check 的表达式后加上一个分号和你想验证的类型，那么 Coq 会 验证该表达式是否属于你提供的类型。当两者不一致时，Coq 会报错并终止执行。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Check true</span><br><span class="line">    : bool.</span><br></pre></td></tr></table></figure>
-
-<h2 id="布尔类型"><a href="#布尔类型" class="headerlink" title="布尔类型"></a>布尔类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive bool : Type :=</span><br><span class="line">| true</span><br><span class="line">| false.</span><br></pre></td></tr></table></figure>
-
-<p>布尔类型实际上是一个特殊的枚举类型，它只包含两个数据值，在这里我们不妨称为 true 和 false。</p>
-<p>对布尔类型数据的常用操作如“与”、“或”、“非”等都容易定义。例如，我们定义函数 andb 来表示“与”操作。这个函数输入两个参数 b1 和 b2，如果b1 的值为 true，直接返回 b2 的值，否则返回 false。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition andb (b1 : bool) (b2 : bool) : bool :=</span><br><span class="line">match b1 with</span><br><span class="line">| true =&gt; b2</span><br><span class="line">| false =&gt; false</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<p>上面这个函数的两个输入参数类型相同，在 Coq 中可以写得紧凑一点，依次列出两个参数，中间用空格隔开，最后写上类型。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition andb (b1 b2 : bool) : bool :=</span><br><span class="line">match b1 with</span><br><span class="line">| true =&gt; b2</span><br><span class="line">| false =&gt; false</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<h2 id="Notation-命令"><a href="#Notation-命令" class="headerlink" title="Notation 命令"></a>Notation 命令</h2><p>Notation 命令可以用来定义新的记号。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Notation &quot;x &amp;&amp; y&quot; := (andb x y).</span><br></pre></td></tr></table></figure>
-
-<p>有个这个记号以后，将来如果我们写表达式 (b1 &amp;&amp; b2)，那么代表的意思就是 (andb b1 b2)，这类似有些编程语言中的宏定义。</p>
-<h2 id="Tactics"><a href="#Tactics" class="headerlink" title="Tactics"></a>Tactics</h2><h3 id="simpl和reflexivity-化简"><a href="#simpl和reflexivity-化简" class="headerlink" title="simpl和reflexivity-化简"></a>simpl和reflexivity-化简</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_O_n: forall n : nat, o + n = n Proof. intros n. simpl. reflexitivity. Qed.</span><br></pre></td></tr></table></figure>
-
-<p>这个证明只用了simpl和reflexivity两种方法。simpl可以将等式的两边同时化简(simplify)，而reflexivity是用来检查等式的两边是否完全一致(identical)。一般情况下，不需要加simpl，因为reflexivity本身在检查一致性的时候，就会自动的进行展开，如果需要在调试的时候查看化简之后的效果才会加上simpl。</p>
-<p>reflexivity除了进行化简的工作，还会根据定义将产生式展开(unfolding)。化简和展开的区别在于，化简是将定义的函数（比如递归函数）化简到稳定的状态（对于递归函数，就是Base case）；展开则是利用产生式的构造子完整的写出数据的形式。</p>
-<p>能够化简的一个前提条件是，函数能够无歧义的化简（上文中n + o &#x3D; n就不能够化简证明，需要分情况证明）。</p>
-<h3 id="rewrite-重写"><a href="#rewrite-重写" class="headerlink" title="rewrite-重写"></a>rewrite-重写</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_id_example : forall n m:nat,</span><br><span class="line">n = m -&gt; n + n = m + m. Proof. </span><br><span class="line">(* move both quantifiers into the context: *)</span><br><span class="line">intros n m. </span><br><span class="line">(* move the hypothesis into the context: *) </span><br><span class="line">intros H. </span><br><span class="line">(* rewrite the goal using the hypothesis: *)</span><br><span class="line">rewrite -&gt; H. reflexivity. Qed.</span><br></pre></td></tr></table></figure>
-
-<p>重写(rewriting)指的是，在证明的过程中，按照给出的前提假设(Hypothesis)，在要证明的式子两边对变量进行改写，辅助证明。</p>
-<p>-&gt;表示的意思是使用前提假设的右侧替换左侧，&lt;-表示左侧替换右侧。</p>
-<p>对于上面的证明过程，我们无法指出所有可能的取值，因此证明的时候无法进行相应的确切的化简，因此需要改写变量满足假设进行证明，该重写过程就是n + n &#x3D; m + m (<em>–&gt;</em>) m + m &#x3D; m + m</p>
-<h3 id="destruct"><a href="#destruct" class="headerlink" title="destruct"></a>destruct</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem surjective_pairing : forall (p : natprod), p = (fst p, snd p). </span><br><span class="line">Proof. intros p.</span><br><span class="line">destruct p as [n m]. </span><br><span class="line">simpl. reflexivity. Qed.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_1_neq_0 : </span><br><span class="line">forall n : nat, beq_nat (n + 1) 0 = false.</span><br><span class="line">Proof. intros n. </span><br><span class="line">destruct n as [| n&#x27;].</span><br><span class="line">- reflexivity. - reflexivity. Qed.</span><br></pre></td></tr></table></figure>
-<p>上述代码可以改写为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_1_neq_0&#x27; : </span><br><span class="line">forall n :nat, beq_nat (n + 1) 0 = false. </span><br><span class="line">Proof. intros [|n]. </span><br><span class="line">- reflexivity.</span><br><span class="line">- reflexivity. Qed.</span><br></pre></td></tr></table></figure>
-
-<p>使用destruct对引入的参数进行分情况讨论，设置子目标(sub goal)，分别进行证明。分情况讨论允许多层的嵌套，在需要进行分情况讨论的地方进行destruct。</p>
-<p>每个子目标前面的-没有语法含义，可以替换为+或者*。</p>
-<p>destruct后面的中括号参数是根据类型的定义设置的，如果出现多种情况就是用|隔开。对于nat的定义，第一个构造子(constructor)并无参数，因此为空，第二个构造器的参数也是nat，因此需要指明参数名称。如果构造器都没有参数，那就可以省略as子句。</p>
-<h3 id="induction-假设归纳"><a href="#induction-假设归纳" class="headerlink" title="induction-假设归纳"></a>induction-假设归纳</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem plus_n_O : </span><br><span class="line">forall n:nat, n = n + 0. </span><br><span class="line">Proof. intros n. </span><br><span class="line">induction n as [| n&#x27; IHn&#x27;].</span><br><span class="line">- (* n = 0 *) reflexivity. </span><br><span class="line">- (* n = S n&#x27; *) simpl. rewrite &lt;- IHn&#x27;. </span><br><span class="line">reflexivity. Qed.</span><br></pre></td></tr></table></figure>
-
-<p>那上述的证明来说明，n可以是任意大的自然数，如果按照分情况讨论的话，可能会一直化简下去，并不能验证任意大小的n。这种情况下，使用类似于数学归纳法进行证明，即induction，归纳证明命题的正确性。</p>
-<p>归纳induction的语法结构同样类似与destruct，产生的不同的子目标，进行归纳证明。产生的子目标也同样根据参数的构造方法有关，并使用|区分不同构造子情况，并在之后子目标的论证用-、+或者*加以区别。induction可以提供关于子目标环境下的参数命名，也可以对子目标环境下的假设(hypothesis)进行命名（在上述论证中就是IHn’，代表着n’ &#x3D; n’ + 0），在该子目标下进行重写，进行进一步的论证。</p>
-<h3 id="assert-行间证明"><a href="#assert-行间证明" class="headerlink" title="assert-行间证明"></a>assert-行间证明</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Theorem mult_0_plus&#x27; : </span><br><span class="line">forall n m :nat, (0 + n) * m = n * m.</span><br><span class="line">Proof. intros n m. </span><br><span class="line">assert (H: 0 + n = n). &#123; reflexivity. &#125; </span><br><span class="line">rewrite → H. </span><br><span class="line">reflexivity. Qed.</span><br></pre></td></tr></table></figure>
-
-<p>如果在证明的过程中需要加入临时的、显而易见的中间引理证明，那么可以考虑assert进行证明内的小引理证明(subtheorem)。assert这种方式引入了两个子目标，第一个便是断言(assertion)本身（在上述的论证中，断言被命名为H，指的是0+n&#x3D;0），这个子目标的论证囊括在大括号…中。另一个子目标就是在既有断言基础上进行原先的论证，通常也是通过重写来完成。</p>
-<p>断言的方式主要是提供一种类似于匿名函数的功能。</p>
-<h2 id="自然数类型"><a href="#自然数类型" class="headerlink" title="自然数类型"></a>自然数类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive nat : Type :=</span><br><span class="line">| O</span><br><span class="line">| S (n : nat).</span><br><span class="line">End Playground.</span><br></pre></td></tr></table></figure>
-
-<p>O 表示自然数 0；S 表示后继函数，如果 n 是一个自然数，则 S n表示它的下一个自然数。</p>
-<p>O, S O, S (S O), S (S (S O)), …对应通常的自然数 0, 1, 2, 3, ….。</p>
-<p>例如，下面的 pred2 函数取比当且输入数 n 小 2 的数，除了特殊情况 n &#x3D; 0, 1，那时返回值为 0。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition pred2 (n : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; O</span><br><span class="line">| S O =&gt; O</span><br><span class="line">| S (S n&#x27;) =&gt; n&#x27;</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<h2 id="Fixpoint"><a href="#Fixpoint" class="headerlink" title="Fixpoint"></a>Fixpoint</h2><p>Fixpoint允许递归的调用本身，但是这种调用必须是一种有界的。因此，Fixpoint函数中所匹配(match)的参数必须是以降序的方式进行展开，确保不会无限递归。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint plus (n : nat) (m : nat) : nat := </span><br><span class="line">match n with</span><br><span class="line">| O ⇒ m </span><br><span class="line">| S n&#x27; ⇒ S (plus n&#x27; m) end.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint beq_nat (n m : nat) : bool :=</span><br><span class="line">match n with</span><br><span class="line">| O ⇒ match m with </span><br><span class="line">| O ⇒ true </span><br><span class="line">| S m&#x27; ⇒ false end </span><br><span class="line">| S n&#x27; ⇒ match m with </span><br><span class="line">         | O ⇒ false </span><br><span class="line">         | S m&#x27; ⇒ beq_nat n&#x27; m&#x27; end end.</span><br></pre></td></tr></table></figure>
-
-<p>为定义复杂一些的函数，仅用模式匹配还不够，我们需要递归定义，反映到语法层面就是定义的开头用关键字 Fixpoint 而不是 Definition。下面的函数 oddb 可判断当 n 取 0 或者 1 时，我们直接判断出结果，否则，n 是不是奇数这件事情依赖于 n 之前第二个数字的奇偶性。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint oddb (n : nat) : bool :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; false</span><br><span class="line">| S O =&gt; true</span><br><span class="line">| S (S n&#x27;) =&gt; oddb n&#x27;</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<p>如果一个函数的参数不止一个，那么用于模式匹配的参数选取可能不唯一。下面给出加法函数的两种定义，都可以被 Coq 接受。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint plus (n m : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; m</span><br><span class="line">| S n&#x27; =&gt; S (plus n&#x27; m)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint plus&#x27; (n m : nat) : nat :=</span><br><span class="line">match m with</span><br><span class="line">| O =&gt; n</span><br><span class="line">| S m&#x27; =&gt; S (plus n m&#x27;)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<h2 id="占位符“-”"><a href="#占位符“-”" class="headerlink" title="占位符“_”"></a>占位符“_”</h2><p>有时候我们可以同时对多个参数做模式匹配，不同参数之间用逗号隔开。下面定义的减法函数演示了这一点，其中不重要的参数可以不写，改用占位符“_” 代替。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint minus (n m : nat) : nat :=</span><br><span class="line">match n, m with</span><br><span class="line">| O , _ =&gt; O</span><br><span class="line">| S _ , O =&gt; n</span><br><span class="line">| S n&#x27;, S m&#x27; =&gt; minus n&#x27; m&#x27;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<h2 id="嵌套的模式匹配"><a href="#嵌套的模式匹配" class="headerlink" title="嵌套的模式匹配"></a>嵌套的模式匹配</h2><p>当然，我们也可以把对多个参数的同时模式匹配改为嵌套的模式匹配。下面定义的函数 minus’ 与 minus 是等效的。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint minus&#x27; (n m : nat) : nat :=</span><br><span class="line">match n with</span><br><span class="line">| O =&gt; O</span><br><span class="line">| S n&#x27; =&gt; match m with</span><br><span class="line">| O =&gt; n</span><br><span class="line">| S m&#x27; =&gt; minus&#x27; n&#x27; m&#x27;</span><br><span class="line">end</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<h2 id="二元组"><a href="#二元组" class="headerlink" title="二元组"></a>二元组</h2><p>上一节介绍的布尔类型和自然数类型都是基本数据类型。现在我们从基本类型出发来构造复杂一些的类型。我们先定义二元组（pair）类型，它包含的每一个元素是一对自然数。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive natpair : Type :=</span><br><span class="line">| pair (n1 n2 : nat).</span><br></pre></td></tr></table></figure>
-
-<p>类型 natpair 只有一个构造子 pair，说明构造一对自然数的唯一方法是把pair 作用到两个自然数上。</p>
-<p>下面我们定义两个投影（projection）函数，把给定的一对自然数投影到第一或第二个组成数字上。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition proj1 (p : natpair) : nat :=</span><br><span class="line">match p with</span><br><span class="line">| (x,y) =&gt; x</span><br><span class="line">end.</span><br><span class="line"></span><br><span class="line">Definition proj2 (p : natpair) : nat :=</span><br><span class="line">match p with</span><br><span class="line">| (x,y) =&gt; y</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<p>例如，下面的命令测试如何把一对数字 (1, 2) 变成 (2, 1)。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Compute (proj2 (1, 2), proj1 (1, 2)).</span><br></pre></td></tr></table></figure>
-
-<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>通过推广二元组类型，我们可以构建三元组、四元组等等，更一般情况就是列表，其长度可以变化。简单而言，由自然数组成的一个列表或者是空表，或者是由一个自然数和另一个列表组成的二元组。我们在模块 NatList 中定义自然数列表类型。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Inductive natlist : Type :=</span><br><span class="line">| nil</span><br><span class="line">| cons (n : nat) (l : natlist).</span><br></pre></td></tr></table></figure>
-
-<p>这个定义中用到两个构造子：nil 表示空表；cons 把自然数 n 和列表 l 组合成一个更长的列表 cons n l。</p>
-<p>我们引入中缀操作符记号 :: 和方括号来表示列表，其中细节暂时不用关心。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Definition list1 := 1 :: (3 :: (5 :: nil)).</span><br><span class="line">Definition list2 := 1 :: 3 :: 5 :: nil.</span><br><span class="line">Definition list3 := [1;3;5].</span><br></pre></td></tr></table></figure>
-
-<p>利用这些记号，我们定义 3 个列表，实际上描述的是同一个列表。</p>
-<p>下面我们定义一些有用的函数，方便对列表进行操纵。函数 repeat 有两个输入参数 n 和 count，它返回一个长度为 count 的列表，其中每个元素都是 n。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint repeat (n count : nat) : natlist :=</span><br><span class="line">match count with</span><br><span class="line">| O =&gt; nil</span><br><span class="line">| S count&#x27; =&gt; n :: (repeat n count&#x27;)</span><br><span class="line">end.</span><br></pre></td></tr></table></figure>
-
-<p>函数 length 可用于计算一个列表的长度。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fixpoint length (l:natlist) : nat :=</span><br><span class="line">match l with</span><br><span class="line">| nil =&gt; O</span><br><span class="line">| h :: t =&gt; S (length t)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
 ]]></content>
       <categories>
         <category>Coq</category>
