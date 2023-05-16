@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.example.com/2023/05/16/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/</loc>
+    
+    <lastmod>2023-05-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.example.com/2023/04/24/apply%20%E7%AD%96%E7%95%A5/</loc>
     
     <lastmod>2023-05-10</lastmod>
@@ -85,7 +94,7 @@
 
   <url>
     <loc>http://www.example.com/</loc>
-    <lastmod>2023-05-10</lastmod>
+    <lastmod>2023-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -93,7 +102,14 @@
   
   <url>
     <loc>http://www.example.com/tags/coq/</loc>
-    <lastmod>2023-05-10</lastmod>
+    <lastmod>2023-05-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.example.com/tags/matlab/</loc>
+    <lastmod>2023-05-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -102,7 +118,14 @@
   
   <url>
     <loc>http://www.example.com/categories/Coq/</loc>
-    <lastmod>2023-05-10</lastmod>
+    <lastmod>2023-05-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.example.com/categories/matlab/</loc>
+    <lastmod>2023-05-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
